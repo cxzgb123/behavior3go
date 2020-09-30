@@ -20,6 +20,14 @@ type BTNodeCfg struct {
 	Properties  map[string]interface{} `json:"properties"`
 }
 
+func (this *BTNodeCfg) GetPropertyAsInterface(name string) interface{} {
+	v, ok := this.Properties[name]
+	if !ok {
+		panic("GetProperty err ,no vlaue:" + name)
+		return nil
+	}
+	return v
+}
 func (this *BTNodeCfg) GetProperty(name string) float64 {
 	v, ok := this.Properties[name]
 	if !ok {
@@ -40,6 +48,13 @@ func (this *BTNodeCfg) GetPropertyAsInt(name string) int {
 	i := int(v)
 	return i
 }
+
+func (this *BTNodeCfg) GetPropertyAsInt32(name string) int32 {
+	v := this.GetProperty(name)
+	i := int32(v)
+	return i
+}
+
 func (this *BTNodeCfg) GetPropertyAsInt64(name string) int64 {
 	v := this.GetProperty(name)
 	i := int64(v)
