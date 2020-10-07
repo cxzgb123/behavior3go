@@ -3,9 +3,9 @@ package actions
 import (
 	"fmt"
 
-	b3 "github.com/magicsea/behavior3go"
-	. "github.com/magicsea/behavior3go/config"
-	. "github.com/magicsea/behavior3go/core"
+	b3 "github.com/cxzgb123/behavior3go"
+	. "github.com/cxzgb123/behavior3go/config"
+	. "github.com/cxzgb123/behavior3go/core"
 )
 
 type Log struct {

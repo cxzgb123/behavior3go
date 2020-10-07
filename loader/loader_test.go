@@ -5,12 +5,12 @@ import (
 	"reflect"
 	"testing"
 
-	b3 "github.com/magicsea/behavior3go"
-	//. "github.com/magicsea/behavior3go/actions"
-	//. "github.com/magicsea/behavior3go/composites"
-	. "github.com/magicsea/behavior3go/config"
-	. "github.com/magicsea/behavior3go/core"
-	//. "github.com/magicsea/behavior3go/decorators"
+	b3 "github.com/cxzgb123/behavior3go"
+	//. "github.com/cxzgb123/behavior3go/actions"
+	//. "github.com/cxzgb123/behavior3go/composites"
+	. "github.com/cxzgb123/behavior3go/config"
+	. "github.com/cxzgb123/behavior3go/core"
+	//. "github.com/cxzgb123/behavior3go/decorators"
 )
 
 type Test struct {
