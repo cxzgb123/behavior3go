@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"reflect"
 )
+
 /**
  * The Blackboard is the memory structure required by `BehaviorTree` and its
  * nodes. It only have 2 public methods: `set` and `get`. These methods works
@@ -54,6 +55,11 @@ func NewTreeData() *TreeData {
 	return &TreeData{NewMemory(), make([]IBaseNode, 0), 0, 0}
 }
 
+func (this *TreeData) Clear() {
+	this.NodeMemory.Clear()
+	this.NodeMemory = nil
+}
+
 //------------------------Memory-------------------------
 type Memory struct {
 	_memory map[string]interface{}
@@ -70,8 +76,12 @@ func (this *Memory) Set(key string, val interface{}) {
 	this._memory[key] = val
 }
 func (this *Memory) Remove(key string) {
-	delete(this._memory,key)
+	delete(this._memory, key)
 }
+func (this *Memory) Clear() {
+	this._memory = nil
+}
+
 //------------------------TreeMemory-------------------------
 type TreeMemory struct {
 	*Memory
@@ -81,6 +91,17 @@ type TreeMemory struct {
 
 func NewTreeMemory() *TreeMemory {
 	return &TreeMemory{NewMemory(), NewTreeData(), make(map[string]*Memory)}
+}
+
+func (this *TreeMemory) Clear() {
+	this.Memory.Clear()
+	this.Memory = nil
+	this._treeData.Clear()
+	this._treeData = nil
+	for _, v := range this._nodeMemory {
+		v.Clear()
+	}
+	this._nodeMemory = nil
 }
 
 //------------------------Blackboard-------------------------
@@ -98,6 +119,15 @@ func NewBlackboard() *Blackboard {
 func (this *Blackboard) Initialize() {
 	this._baseMemory = NewMemory()
 	this._treeMemory = make(map[string]*TreeMemory)
+}
+
+func (this *Blackboard) End() {
+	this._baseMemory.Clear()
+	this._baseMemory = nil
+	for _, v := range this._treeMemory {
+		v.Clear()
+	}
+	this._treeMemory = nil
 }
 
 /**
@@ -163,6 +193,16 @@ func (this *Blackboard) _getMemory(treeScope, nodeScope string) *Memory {
 	return memory
 }
 
+func (this *Blackboard) SetMem(key string, value interface{}) {
+	var memory = this._getMemory("", "")
+	memory.Set(key, value)
+}
+
+func (this *Blackboard) GetMem(key string) interface{} {
+	memory := this._getMemory("", "")
+	return memory.Get(key)
+}
+
 /**
  * Stores a value in the blackboard. If treeScope and nodeScope are
  * provided, this method will save the value into the per node per tree
@@ -183,12 +223,6 @@ func (this *Blackboard) Set(key string, value interface{}, treeScope, nodeScope 
 	var memory = this._getMemory(treeScope, nodeScope)
 	memory.Set(key, value)
 }
-
-func (this *Blackboard) SetMem(key string, value interface{}) {
-	var memory = this._getMemory("", "")
-	memory.Set(key, value)
-}
-
 func (this *Blackboard) Remove(key string) {
 	var memory = this._getMemory("", "")
 	memory.Remove(key)
@@ -220,10 +254,6 @@ func (this *Blackboard) _getTreeData(treeScope string) *TreeData {
 **/
 func (this *Blackboard) Get(key, treeScope, nodeScope string) interface{} {
 	memory := this._getMemory(treeScope, nodeScope)
-	return memory.Get(key)
-}
-func (this *Blackboard) GetMem(key string) interface{} {
-	memory := this._getMemory("","")
 	return memory.Get(key)
 }
 func (this *Blackboard) GetFloat64(key, treeScope, nodeScope string) float64 {
@@ -285,7 +315,7 @@ func (this *Blackboard) GetInt32(key, treeScope, nodeScope string) int32 {
 	return v.(int32)
 }
 
-func ReadNumberToInt64(v interface{})  int64 {
+func ReadNumberToInt64(v interface{}) int64 {
 	var ret int64
 	switch tvalue := v.(type) {
 	case uint64:
@@ -307,6 +337,7 @@ func ReadNumberToUInt64(v interface{}) uint64 {
 	}
 	return ret
 }
+
 //
 //func ReadNumberToInt32(v interface{}) int32 {
 //	var ret int32
